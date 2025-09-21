@@ -18,7 +18,11 @@ app.use(morgan('dev'));
 app.use('/api/upload', uploadRoute);
 app.use('/api/analyze', analyzeRoute);
 app.use('/api/chat', chatRoute);
+// Readiness endpoints so Passenger’s first probe gets a fast 200
+app.get('/', (_req, res) => res.status(200).send('OK'));
+app.get('/api', (_req, res) => res.status(200).send('OK'));
+app.get('/api/health', (_req, res) => res.json({ ok: true, port: PORT, ts: new Date().toISOString() }));
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`[passenger] Node app listening on port ${PORT}`);
 });
