@@ -4,9 +4,14 @@ import fssync from 'fs';
 import path from 'path';
 import mammoth from 'mammoth';
 import dotenv from 'dotenv';
+import multer from 'multer';
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { extractTextFromBuffer } from '../services/documentParser.js';
+import { extractTextFromImage } from '../services/ocr.js';
 import { safetySettings } from '../services/gemini.js';
+// import your existing analyzeDocumentWithGemini function
+// import { analyzeDocumentWithGemini } from '...';
 
 dotenv.config();
 
@@ -155,6 +160,46 @@ router.post('/', async (req, res) => {
 		console.error('Analyze error:', e);
 		res.status(500).json({ message: 'Analysis failed' });
 	}
+});
+
+const uploadImage = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 } // 8MB
+});
+
+// Analyze pasted text
+router.post('/text', async (req, res) => {
+  try {
+    const { text, docType } = req.body || {};
+    const clean = String(text || '').trim();
+    if (clean.length < 30) {
+      return res.status(400).json({ message: 'Please provide at least ~30 characters of text.' });
+    }
+    const analysis = await analyzeDocumentWithGemini(clean, docType);
+    return res.json(analysis);
+  } catch (e) {
+    console.error('Analyze text error:', e);
+    res.status(500).json({ message: 'Analysis failed' });
+  }
+});
+
+// OCR image then analyze (Tesseract only)
+router.post('/image', uploadImage.single('image'), async (req, res) => {
+  try {
+    if (!req.file?.buffer) {
+      return res.status(400).json({ message: 'No image provided' });
+    }
+    const lang = req.body?.lang || process.env.OCR_LANG || 'eng'; // e.g., 'eng' or 'eng+spa'
+    const ocrText = await extractTextFromImage(req.file.buffer, lang);
+    if (!ocrText || ocrText.length < 30) {
+      return res.status(400).json({ message: 'Could not extract enough text from the image' });
+    }
+    const analysis = await analyzeDocumentWithGemini(ocrText, req.body?.docType);
+    return res.json(analysis);
+  } catch (e) {
+    console.error('Analyze image error:', e);
+    res.status(500).json({ message: 'Analysis failed' });
+  }
 });
 
 // GET /api/analyze/:docId -> fetch saved analysis (stub)

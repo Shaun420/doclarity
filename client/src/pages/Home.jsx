@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Shield,
   UploadCloud,
@@ -12,6 +12,7 @@ import {
   FileText,
   Clock,
 } from 'lucide-react';
+import QuickAnalyze from '../components/QuickAnalyze';
 
 const features = [
   {
@@ -62,6 +63,7 @@ const steps = [
 ];
 
 const Home = () => {
+	const navigate = useNavigate();
   return (
     <div className="bg-gray-50">
       {/* Hero */}
@@ -157,6 +159,27 @@ const Home = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Quick Analyze */}
+      <section className="py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Try quick analysis — paste text or scan an image
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              No file upload needed. Get a fast summary and risks in seconds.
+            </p>
+          </div>
+          <QuickAnalyze
+            navigateToAnalysis={(data) =>
+              navigate('/analysis', {
+                state: { analysisData: { ...data, documentName: 'Quick Analysis' } },
+              })
+            }
+          />
         </div>
       </section>
 
