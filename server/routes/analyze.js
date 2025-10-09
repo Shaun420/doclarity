@@ -164,7 +164,14 @@ router.post('/', async (req, res) => {
 
 const uploadImage = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 8 * 1024 * 1024 } // 8MB
+  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB
+  fileFilter: (_req, file, cb) => {
+    // Accept images; allow octet-stream too (browsers sometimes send it)
+    if (file.mimetype?.startsWith('image/') || file.mimetype === 'application/octet-stream') {
+      return cb(null, true);
+    }
+    cb(new Error('Only image uploads are allowed'));
+  }
 });
 
 // Analyze pasted text
@@ -189,16 +196,28 @@ router.post('/image', uploadImage.single('image'), async (req, res) => {
     if (!req.file?.buffer) {
       return res.status(400).json({ message: 'No image provided' });
     }
-    const lang = req.body?.lang || process.env.OCR_LANG || 'eng'; // e.g., 'eng' or 'eng+spa'
-    const ocrText = await extractTextFromImage(req.file.buffer, lang);
-    if (!ocrText || ocrText.length < 30) {
+
+    console.log('[ANALYZE:image] bytes:', req.file.buffer.length, 'type:', req.file.mimetype);
+    const rawLang = req.body?.lang; // can be undefined
+    console.log('[ANALYZE:image] raw lang:', rawLang);
+
+    const text = await extractTextFromImage(req.file.buffer, rawLang || 'eng');
+    console.log('[ANALYZE:image] OCR text length:', text.length);
+
+    if (!text || text.length < 30) {
       return res.status(400).json({ message: 'Could not extract enough text from the image' });
     }
-    const analysis = await analyzeDocumentWithGemini(ocrText, req.body?.docType);
+
+    // Your existing analysis pipeline
+    const analysis = await analyzeDocumentWithGemini(text, req.body?.docType);
     return res.json(analysis);
-  } catch (e) {
-    console.error('Analyze image error:', e);
-    res.status(500).json({ message: 'Analysis failed' });
+  } catch (err) {
+    console.error('[ANALYZE:image] error:', err);
+    return res.status(500).json({
+      message: 'Analysis failed',
+      error: err?.message,
+      ...(process.env.NODE_ENV !== 'production' ? { stack: err?.stack } : {})
+    });
   }
 });
 

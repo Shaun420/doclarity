@@ -1,5 +1,5 @@
 // server/services/ocr.js
-import { createWorker } from 'tesseract.js';
+import Tesseract from 'tesseract.js';
 import os from 'os';
 import path from 'path';
 
@@ -15,11 +15,36 @@ const tidy = (t = '') =>
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-/**
- * Initialize the Tesseract worker (idempotent).
- * lang can be 'eng' or combos like 'eng+spa'.
- */
-export async function initOcr(lang = DEFAULT_LANG) {
+// Turn anything (array, CSV, "eng+spa", JSON string) into "eng+spa"
+// Turn anything into "eng+spa" style string
+function normalizeLang(input) {
+  try {
+    if (Array.isArray(input)) {
+      return input.map(s => String(s).trim()).filter(Boolean).join('+') || DEFAULT_LANG;
+    }
+    if (typeof input === 'string') {
+      const trimmed = input.trim();
+      // Handle JSON array string '["eng","spa"]'
+      if ((trimmed.startsWith('[') && trimmed.endsWith(']')) || (trimmed.startsWith('"') && trimmed.endsWith('"'))) {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map(s => String(s).trim()).filter(Boolean).join('+') || DEFAULT_LANG;
+        }
+      }
+      const parts = trimmed.split(/[,+]/).map(s => s.trim()).filter(Boolean);
+      return parts.length ? parts.join('+') : DEFAULT_LANG;
+    }
+    if (input && typeof input === 'object') {
+      const vals = Object.values(input).map(v => String(v).trim()).filter(Boolean);
+      return vals.length ? vals.join('+') : DEFAULT_LANG;
+    }
+    return DEFAULT_LANG;
+  } catch {
+    return DEFAULT_LANG;
+  }
+}
+
+export async function initOcr(langInput = DEFAULT_LANG) {
   if (!worker) {
     worker = await createWorker({
       // Use a public tessdata mirror for language files
@@ -31,6 +56,7 @@ export async function initOcr(lang = DEFAULT_LANG) {
       cachePath: path.join(os.tmpdir(), 'tessdata')
     });
   }
+  const lang = normalizeLang(langInput);
   if (currentLang !== lang) {
     await worker.loadLanguage(lang);
     await worker.initialize(lang);
@@ -41,9 +67,20 @@ export async function initOcr(lang = DEFAULT_LANG) {
 /**
  * Extract text from an image Buffer using Tesseract only.
  */
-export async function extractTextFromImage(buffer, lang = DEFAULT_LANG) {
-  await initOcr(lang);
-  const { data } = await worker.recognize(buffer);
+// export async function extractTextFromImage(buffer, lang = DEFAULT_LANG) {
+//   await initOcr(lang);
+//   const { data } = await worker.recognize(buffer);
+//   return tidy(data?.text || '');
+// }
+export async function extractTextFromImage(buffer, langInput) {
+  const lang = normalizeLang(langInput || DEFAULT_LANG);
+
+  // Recognize directly (internally spins up a worker once)
+  const { data } = await Tesseract.recognize(buffer, lang, {
+    // Uncomment to debug Tesseract:
+    // logger: (m) => console.log('[OCR]', m)
+  });
+
   return tidy(data?.text || '');
 }
 
