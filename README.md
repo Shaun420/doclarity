@@ -6,6 +6,8 @@ An AI-powered web application that transforms complex legal documents into clear
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)
 ![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
 
+Try it out: [Prototype Link](https://doclarity.sgp.dom.my.id)
+
 ## 🌟 Features
 
 ### Core Functionality
