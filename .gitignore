@@ -1,5 +1,9 @@
 tenet.txt
 oauth_cred.json
+
+deploy.yml
+deploy*.yml
+
 # Dependencies
 node_modules/
 npm-debug.log*
