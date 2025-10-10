@@ -72,18 +72,18 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
       <div className="flex items-center justify-between gap-2 mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Quick analysis</h3>
-        <div className="inline-flex bg-gray-100 rounded-lg p-0.5">
+        <h3 className="text-lg font-semibold text-slate-900">Quick analysis</h3>
+        <div className="inline-flex bg-slate-100 rounded-lg p-0.5">
           <button
             onClick={() => setMode('paste')}
-            className={`px-3 py-1.5 text-sm rounded-md ${mode === 'paste' ? 'bg-white shadow text-gray-900' : 'text-gray-600'}`}
+            className={`px-3 py-1.5 text-sm rounded-md ${mode === 'paste' ? 'bg-white shadow text-slate-900' : 'text-slate-600'}`}
           >
             <Clipboard className="inline w-4 h-4 mr-1" />
             Paste text
           </button>
           <button
             onClick={() => setMode('image')}
-            className={`px-3 py-1.5 text-sm rounded-md ${mode === 'image' ? 'bg-white shadow text-gray-900' : 'text-gray-600'}`}
+            className={`px-3 py-1.5 text-sm rounded-md ${mode === 'image' ? 'bg-white shadow text-slate-900' : 'text-slate-600'}`}
           >
             <Camera className="inline w-4 h-4 mr-1" />
             Scan image
@@ -96,22 +96,22 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
           <textarea
             rows={6}
             placeholder="Paste copied contract text here (at least ~30 characters)…"
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
-          <p className="text-xs text-gray-500 mt-2">Tip: Use Ctrl/Cmd+V to paste quickly.</p>
+          <p className="text-xs text-slate-500 mt-2">Tip: Use Ctrl/Cmd+V to paste quickly.</p>
         </div>
       ) : (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Upload or capture an image</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">Upload or capture an image</label>
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
             capture="environment"
             onChange={handleImagePick}
-            className="block w-full text-sm text-gray-700 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+            className="block w-full text-sm text-slate-700 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-primary-600 file:text-white hover:file:bg-primary-700"
           />
           {imgPreview && (
             <img
@@ -120,7 +120,7 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
               className="mt-3 max-h-64 rounded-md border border-gray-200"
             />
           )}
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Keep the image sharp and well-lit. We run OCR with Tesseract (on server).
           </p>
         </div>
@@ -130,13 +130,13 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
         <button
           onClick={submit}
           disabled={!canSubmit || loading}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:bg-slate-300 transition-colors"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
           Analyze
         </button>
       </div>
-      <p className="text-[11px] text-gray-500 mt-3">
+      <p className="text-[11px] text-slate-500 mt-3">
         By using quick analysis, you agree that pasted text or images will be processed securely for analysis.
       </p>
     </div>

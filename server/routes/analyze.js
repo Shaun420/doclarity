@@ -197,12 +197,12 @@ router.post('/image', uploadImage.single('image'), async (req, res) => {
       return res.status(400).json({ message: 'No image provided' });
     }
 
-    console.log('[ANALYZE:image] bytes:', req.file.buffer.length, 'type:', req.file.mimetype);
+    // console.log('[ANALYZE:image] bytes:', req.file.buffer.length, 'type:', req.file.mimetype);
     const rawLang = req.body?.lang; // can be undefined
-    console.log('[ANALYZE:image] raw lang:', rawLang);
+    // console.log('[ANALYZE:image] raw lang:', rawLang);
 
     const text = await extractTextFromImage(req.file.buffer, rawLang || 'eng');
-    console.log('[ANALYZE:image] OCR text length:', text.length);
+    // console.log('[ANALYZE:image] OCR text length:', text.length);
 
     if (!text || text.length < 30) {
       return res.status(400).json({ message: 'Could not extract enough text from the image' });

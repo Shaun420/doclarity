@@ -114,14 +114,14 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg flex flex-col h-[600px]">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 rounded-t-lg">
+      <div className="bg-primary-600 text-white p-4 rounded-t-lg">
         <div className="flex items-center gap-3">
           <div className="bg-white/20 p-2 rounded-full">
             <Bot className="w-6 h-6" />
           </div>
           <div>
             <h3 className="font-semibold text-lg">AI Legal Assistant</h3>
-            <p className="text-sm text-blue-100">Ask me anything about your document</p>
+            <p className="text-sm text-primary-100">Ask me anything about your document</p>
           </div>
         </div>
       </div>
@@ -136,8 +136,8 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
             <div className={`max-w-[80%] ${message.type === 'user' ? 'order-2' : 'order-1'}`}>
               <div className="flex items-start gap-2">
                 {message.type === 'bot' && (
-                  <div className="bg-blue-100 p-2 rounded-full">
-                    <Bot className="w-4 h-4 text-blue-600" />
+                  <div className="bg-primary-100 p-2 rounded-full">
+                    <Bot className="w-4 h-4 text-primary-600" />
                   </div>
                 )}
                 
@@ -145,10 +145,10 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
                   <div
                     className={`rounded-lg p-3 ${
                       message.type === 'user'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-primary-600 text-white'
                         : message.isError
-                        ? 'bg-red-50 text-red-800 border border-red-200'
-                        : 'bg-gray-100 text-gray-800'
+                        ? 'bg-danger-50 text-danger-800 border border-danger-200'
+                        : 'bg-slate-100 text-slate-800'
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{message.content}</p>
@@ -161,7 +161,7 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
                           <button
                             key={index}
                             onClick={() => onClauseReference?.(ref.clauseId)}
-                            className="text-xs text-blue-700 hover:underline block"
+                            className="text-xs text-primary-700 hover:underline block"
                           >
                             • {ref.section}: {ref.title}
                           </button>
@@ -175,7 +175,7 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
                     <div className="flex items-center gap-2 mt-1">
                       <button
                         onClick={() => copyToClipboard(message.content)}
-                        className="text-gray-400 hover:text-gray-600 p-1"
+                        className="text-slate-400 hover:text-slate-600 p-1"
                         title="Copy response"
                       >
                         <Copy className="w-4 h-4" />
@@ -184,8 +184,8 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
                         onClick={() => handleFeedback(message.id, 'positive')}
                         className={`p-1 ${
                           message.feedback === 'positive' 
-                            ? 'text-green-600' 
-                            : 'text-gray-400 hover:text-green-600'
+                            ? 'text-success-600' 
+                            : 'text-slate-400 hover:text-success-600'
                         }`}
                         title="Helpful response"
                       >
@@ -195,8 +195,8 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
                         onClick={() => handleFeedback(message.id, 'negative')}
                         className={`p-1 ${
                           message.feedback === 'negative' 
-                            ? 'text-red-600' 
-                            : 'text-gray-400 hover:text-red-600'
+                            ? 'text-danger-600' 
+                            : 'text-slate-400 hover:text-danger-600'
                         }`}
                         title="Not helpful"
                       >
@@ -207,8 +207,8 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
                 </div>
 
                 {message.type === 'user' && (
-                  <div className="bg-gray-200 p-2 rounded-full">
-                    <User className="w-4 h-4 text-gray-600" />
+                  <div className="bg-slate-200 p-2 rounded-full">
+                    <User className="w-4 h-4 text-slate-600" />
                   </div>
                 )}
               </div>
@@ -219,9 +219,9 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
         {/* Loading Indicator */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg p-3 flex items-center gap-2">
-              <Loader className="w-4 h-4 animate-spin text-blue-600" />
-              <span className="text-gray-600">Analyzing your question...</span>
+            <div className="bg-slate-100 rounded-lg p-3 flex items-center gap-2">
+              <Loader className="w-4 h-4 animate-spin text-primary-600" />
+              <span className="text-slate-600">Analyzing your question...</span>
             </div>
           </div>
         )}
@@ -232,13 +232,13 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
       {/* Suggested Questions */}
       {suggestedQuestions.length > 0 && (
         <div className="px-4 pb-2">
-          <p className="text-xs text-gray-500 mb-2">Suggested questions:</p>
+          <p className="text-xs text-slate-500 mb-2">Suggested questions:</p>
           <div className="flex flex-wrap gap-2">
             {suggestedQuestions.slice(0, 3).map((question, index) => (
               <button
                 key={index}
                 onClick={() => handleSuggestedQuestion(question)}
-                className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full transition-colors"
+                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full transition-colors"
               >
                 {question}
               </button>
@@ -257,13 +257,13 @@ const AIChatBot = ({ documentContext, onClauseReference }) => {
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask a question about your document..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             disabled={isLoading}
           />
           <button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isLoading}
-            className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="bg-primary-600 text-white p-2 rounded-lg hover:bg-primary-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
           >
             <Send className="w-5 h-5" />
           </button>

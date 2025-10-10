@@ -52,13 +52,13 @@ const Analysis = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+            className="flex items-center gap-2 text-slate-600 hover:text-slate-800 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Upload
@@ -66,21 +66,21 @@ const Analysis = () => {
           
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Document Analysis</h1>
-              <p className="text-gray-600 mt-2">{analysisData.documentName}</p>
+              <h1 className="text-3xl font-bold text-slate-900">Document Analysis</h1>
+              <p className="text-slate-600 mt-2">{analysisData.documentName}</p>
             </div>
             
             <div className="flex gap-3">
               <button
                 onClick={handleDownloadReport}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-slate-50"
               >
                 <Download className="w-4 h-4" />
                 Download Report
               </button>
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
                 <Share2 className="w-4 h-4" />
                 Share

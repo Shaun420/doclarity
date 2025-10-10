@@ -57,8 +57,8 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
 
   const getImportanceColor = (importance) => {
     switch (importance) {
-      case 'high': return 'border-red-500/60 bg-red-50';
-      case 'medium': return 'border-amber-500/60 bg-amber-50';
+      case 'high': return 'border-danger-500/60 bg-danger-50';
+      case 'medium': return 'border-warning-500/60 bg-warning-50';
       case 'low': return 'border-emerald-500/60 bg-emerald-50';
       default: return 'border-gray-300 bg-white';
     }
@@ -66,8 +66,8 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
 
   const getImportanceIcon = (importance) => {
     switch (importance) {
-      case 'high': return <AlertCircle className="w-5 h-5 text-red-600" />;
-      case 'medium': return <AlertCircle className="w-5 h-5 text-amber-600" />;
+      case 'high': return <AlertCircle className="w-5 h-5 text-danger-600" />;
+      case 'medium': return <AlertCircle className="w-5 h-5 text-warning-600" />;
       case 'low': return <HelpCircle className="w-5 h-5 text-emerald-600" />;
       default: return null;
     }
@@ -129,7 +129,7 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
     const parts = text.split(new RegExp(`(${escapeRegExp(q)})`, 'gi'));
     return parts.map((part, i) =>
       part.toLowerCase() === q.toLowerCase() ? (
-        <mark key={i} className="bg-yellow-200 text-gray-900 px-0.5 rounded">{part}</mark>
+        <mark key={i} className="bg-warning-200 text-slate-900 px-0.5 rounded">{part}</mark>
       ) : (
         <span key={i}>{part}</span>
       )
@@ -168,10 +168,10 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex items-start justify-between gap-4 mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Interactive Clause Explorer</h2>
-        <div className="text-sm text-gray-500">
-          Showing <span className="font-semibold text-gray-700">{filteredSortedClauses.length}</span> of{' '}
-          <span className="font-semibold text-gray-700">{clauses.length}</span>
+        <h2 className="text-2xl font-bold text-slate-800">Interactive Clause Explorer</h2>
+        <div className="text-sm text-slate-500">
+          Showing <span className="font-semibold text-slate-700">{filteredSortedClauses.length}</span> of{' '}
+          <span className="font-semibold text-slate-700">{clauses.length}</span>
         </div>
       </div>
 
@@ -179,19 +179,19 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
       <div className="flex flex-col lg:flex-row gap-3 mb-5">
         {/* Search */}
         <div className="flex-auto self-center relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
           <input
             ref={searchRef}
             type="text"
             placeholder="Search title, section, explanation..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
           {searchInput && (
             <button
               onClick={() => setSearchInput('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               aria-label="Clear search"
             >
               <RefreshCw className="w-4 h-4" />
@@ -201,19 +201,19 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
 
         {/* Importance chips */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-gray-500">Filter:</span>
+          <span className="text-xs text-slate-500">Filter:</span>
           {(['all', 'high', 'medium', 'low']).map(key => (
             <button
               key={key}
               onClick={() => setFilterType(key)}
               className={[
                 'px-3 py-1.5 rounded-full text-sm border transition-colors',
-                filterType === key ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                filterType === key ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-slate-700 border-gray-300 hover:bg-slate-50'
               ].join(' ')}
             >
               {key === 'all' ? 'All' : key.charAt(0).toUpperCase() + key.slice(1)}
               {key !== 'all' && (
-                <span className="ml-2 text-xs rounded-full px-2 py-0.5 bg-white/70 border border-white/50 text-gray-700">
+                <span className="ml-2 text-xs rounded-full px-2 py-0.5 bg-white/70 border border-white/50 text-slate-700">
                   {counts[key]}
                 </span>
               )}
@@ -223,11 +223,11 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
 
         {/* Sort + Pinned */}
         <div className="flex flex-wrap items-center gap-2">
-          <Filter className="w-5 h-5 text-gray-600" />
+          <Filter className="w-5 h-5 text-slate-600" />
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 bg-white"
           >
             <option value="relevance">Sort: Relevance</option>
             <option value="importance">Sort: Importance</option>
@@ -238,7 +238,7 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
           <button
             onClick={() => setShowPinnedOnly(v => !v)}
             className={`ml-2 inline-flex items-center gap-1 px-3 py-2 rounded-lg border transition-colors ${
-              showPinnedOnly ? 'bg-yellow-100 border-yellow-300 text-yellow-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              showPinnedOnly ? 'bg-warning-100 border-warning-300 text-warning-800' : 'bg-white text-slate-700 border-gray-300 hover:bg-slate-50'
             }`}
             title="Show pinned only"
           >
@@ -249,13 +249,13 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={expandAll}
-              className="text-sm px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
+              className="text-sm px-3 py-2 rounded-lg border border-gray-300 hover:bg-slate-50"
             >
               Expand all
             </button>
             <button
               onClick={collapseAll}
-              className="text-sm px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
+              className="text-sm px-3 py-2 rounded-lg border border-gray-300 hover:bg-slate-50"
             >
               Collapse all
             </button>
@@ -266,7 +266,7 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
       {/* Clauses */}
       <div className="space-y-4">
         {filteredSortedClauses.length === 0 && (
-          <div className="text-center text-gray-600 py-10 border rounded-lg">
+          <div className="text-center text-slate-600 py-10 border rounded-lg">
             <p className="font-medium">No clauses match your filters.</p>
             <p className="text-sm">Try clearing search or selecting “All”.</p>
           </div>
@@ -288,16 +288,16 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
                   aria-controls={`clause-panel-${clause.id}`}
                 >
                   {isOpen
-                    ? <ChevronDown className="w-5 h-5 text-gray-600" />
-                    : <ChevronRight className="w-5 h-5 text-gray-600" />
+                    ? <ChevronDown className="w-5 h-5 text-slate-600" />
+                    : <ChevronRight className="w-5 h-5 text-slate-600" />
                   }
                   {getImportanceIcon(clause.importance)}
                   <div className="text-left">
-                    <h3 className="font-semibold text-gray-800">
+                    <h3 className="font-semibold text-slate-800">
                       {highlight(clause.title, searchTerm)}
                     </h3>
                     {clause.section && (
-                      <div className="text-xs text-gray-500">{highlight(clause.section, searchTerm)}</div>
+                      <div className="text-xs text-slate-500">{highlight(clause.section, searchTerm)}</div>
                     )}
                   </div>
                 </button>
@@ -305,14 +305,14 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => copyRef(clause)}
-                    className="text-gray-600 hover:text-gray-800 p-1.5 rounded"
+                    className="text-slate-600 hover:text-slate-800 p-1.5 rounded"
                     title="Copy reference"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => togglePinned(clause.id)}
-                    className="text-yellow-600 hover:text-yellow-700 p-1.5 rounded"
+                    className="text-warning-600 hover:text-warning-700 p-1.5 rounded"
                     title={pinned[clause.id] ? 'Unpin' : 'Pin'}
                   >
                     {pinned[clause.id] ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
@@ -325,14 +325,14 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
                 <div id={`clause-panel-${clause.id}`} className="px-4 pb-4 border-t border-gray-200 animate-fade-in">
                   {/* Original Text */}
                   <div className="mt-4">
-                    <h4 className="font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <h4 className="font-medium text-slate-700 mb-2 flex items-center gap-2">
                       <BookOpen className="w-4 h-4" />
                       Original Text
                     </h4>
-                    <div className="bg-gray-100 p-3 rounded-lg text-sm text-gray-700 italic">
+                    <div className="bg-slate-100 p-3 rounded-lg text-sm text-slate-700 italic">
                       {clause.originalText
                         ? <>“{highlight(clause.originalText, searchTerm)}”</>
-                        : <span className="text-gray-500 not-italic">No excerpt available</span>
+                        : <span className="text-slate-500 not-italic">No excerpt available</span>
                       }
                     </div>
                   </div>
@@ -340,20 +340,20 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
                   {/* Plain English Explanation */}
                   {clause.explanation && (
                     <div className="mt-4">
-                      <h4 className="font-medium text-gray-700 mb-2">Plain English Explanation</h4>
-                      <p className="text-gray-700">{highlight(clause.explanation, searchTerm)}</p>
+                      <h4 className="font-medium text-slate-700 mb-2">Plain English Explanation</h4>
+                      <p className="text-slate-700">{highlight(clause.explanation, searchTerm)}</p>
                     </div>
                   )}
 
                   {/* Key Implications */}
                   {!!(clause.implications?.length) && (
                     <div className="mt-4">
-                      <h4 className="font-medium text-gray-700 mb-2">What This Means for You</h4>
+                      <h4 className="font-medium text-slate-700 mb-2">What This Means for You</h4>
                       <ul className="space-y-1">
                         {clause.implications.map((implication, index) => (
                           <li key={index} className="flex items-start gap-2">
-                            <span className="text-blue-600 mt-1">•</span>
-                            <span className="text-gray-700 text-sm">{implication}</span>
+                            <span className="text-primary-600 mt-1">•</span>
+                            <span className="text-slate-700 text-sm">{implication}</span>
                           </li>
                         ))}
                       </ul>
@@ -362,11 +362,11 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
 
                   {/* Action Items */}
                   {!!(clause.actionItems?.length) && (
-                    <div className="mt-4 bg-blue-50 p-3 rounded-lg">
-                      <h4 className="font-medium text-blue-800 mb-2">Recommended Actions</h4>
+                    <div className="mt-4 bg-primary-50 p-3 rounded-lg">
+                      <h4 className="font-medium text-primary-800 mb-2">Recommended Actions</h4>
                       <ul className="space-y-1">
                         {clause.actionItems.map((action, index) => (
-                          <li key={index} className="text-sm text-blue-700">✓ {action}</li>
+                          <li key={index} className="text-sm text-primary-700">✓ {action}</li>
                         ))}
                       </ul>
                     </div>
@@ -375,7 +375,7 @@ const ClauseExplorer = ({ clauses = [], onAskClause }) => {
                   {/* Ask About This Clause */}
                   <button
                     onClick={() => onAskClause?.(clause)}
-                    className="mt-4 text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
+                    className="mt-4 text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-1"
                   >
                     <HelpCircle className="w-4 h-4" />
                     Ask a question about this clause

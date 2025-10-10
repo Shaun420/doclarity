@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Upload from "./pages/Upload";
 import Analysis from './pages/Analysis';
+//import './app.css';
 
 function App() {
   return (
