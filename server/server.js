@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import uploadRoute from './routes/upload.js';
 import analyzeRoute from './routes/analyze.js';
 import chatRoute from "./routes/chat.js";
+import secure from './routes/secure.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
+app.use('/me', secure);
 app.use('/api/upload', uploadRoute);
 app.use('/api/analyze', analyzeRoute);
 app.use('/api/chat', chatRoute);
@@ -26,3 +28,4 @@ app.get('/api/health', (_req, res) => res.json({ ok: true, port: PORT, ts: new D
 app.listen(PORT, () => {
   console.log(`[passenger] Node app listening on port ${PORT}`);
 });
+
