@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { X } from 'lucide-react'
+import GoogleSignInButton from './GoogleSignInButton'
 
 export default function AuthModal({ open, onClose, mode = 'login' }) {
   const [email, setEmail] = useState('')
@@ -99,12 +100,18 @@ export default function AuthModal({ open, onClose, mode = 'login' }) {
 
           <div className="my-3 text-center text-sm text-slate-500">or</div>
 
-          <button
-            onClick={signInGoogle}
-            className="w-full border border-slate-300 rounded-lg py-2 hover:bg-slate-50"
-          >
-            Continue with Google
-          </button>
+			<GoogleSignInButton
+			onSuccess={() => {
+				// Session is set in supabase-js; close modal
+				onClose?.()
+			}}
+			onError={(e) => {
+				setError(e?.message || 'Google sign-in failed')
+			}}
+			text={mode === 'signup' ? 'signup_with' : 'signin_with'}
+			size="large"
+			width={360}
+			/>
 
           {error && <p className="mt-3 text-danger-700 text-sm">{error}</p>}
         </div>

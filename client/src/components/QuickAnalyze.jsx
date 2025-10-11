@@ -1,20 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Camera, Clipboard, Image as ImageIcon, Loader2 } from 'lucide-react';
+import ImageAcquire from '../components/ImageAcquire';
 
 const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
-  const [mode, setMode] = useState('paste'); // paste | image
+  const [mode, setMode] = useState('image'); // 'paste' | 'image'
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [imgPreview, setImgPreview] = useState(null);
-  const fileRef = useRef(null);
+  const [imgFile, setImgFile] = useState(null);
 
-  const handleImagePick = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImgPreview(URL.createObjectURL(file));
-  };
-
+  // Optional compression helper (kept from your code)
   const compressImage = (file, maxW = 1600, quality = 0.8) =>
     new Promise((resolve, reject) => {
       const img = new Image();
@@ -40,6 +36,24 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
       img.src = url;
     });
 
+  // ImageAcquire handlers
+  const handleSelectFile = async (file) => {
+    setImgFile(file);
+    setImgPreview(URL.createObjectURL(file));
+  };
+
+  const handleSelectUrl = async (url) => {
+    try {
+      const resp = await fetch(url, { mode: 'cors' });
+      if (!resp.ok) throw new Error('Could not load image URL');
+      const blob = await resp.blob();
+      const file = new File([blob], 'remote.jpg', { type: blob.type || 'image/jpeg' });
+      await handleSelectFile(file);
+    } catch {
+      alert('Could not load image URL');
+    }
+  };
+
   const submit = async () => {
     try {
       setLoading(true);
@@ -48,13 +62,13 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
         onResult?.(data);
         navigateToAnalysis?.(data);
       } else {
-        const file = fileRef.current?.files?.[0];
-        if (!file) throw new Error('Select an image');
-        const compressed = await compressImage(file);
+        if (!imgFile) return alert('Please select an image first');
+        // Compress (optional; comment out if not needed)
+        const compressed = await compressImage(imgFile);
         const form = new FormData();
         form.append('image', compressed);
         const { data } = await axios.post('/api/analyze/image', form, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
         onResult?.(data);
         navigateToAnalysis?.(data);
@@ -66,26 +80,33 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
     }
   };
 
-  const canSubmit =
-    mode === 'paste' ? text.trim().length >= 30 : Boolean(fileRef.current?.files?.[0]);
+  const canSubmit = mode === 'paste' ? text.trim().length >= 30 : Boolean(imgFile);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
       <div className="flex items-center justify-between gap-2 mb-4">
         <h3 className="text-lg font-semibold text-slate-900">Quick analysis</h3>
+
+        {/* Mode toggle */}
         <div className="inline-flex bg-slate-100 rounded-lg p-0.5">
           <button
             onClick={() => setMode('paste')}
-            className={`px-3 py-1.5 text-sm rounded-md ${mode === 'paste' ? 'bg-white shadow text-slate-900' : 'text-slate-600'}`}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-sm transition-all
+              ${mode === 'paste'
+                ? 'bg-white shadow text-slate-900'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
           >
-            <Clipboard className="inline w-4 h-4 mr-1" />
+            <Clipboard className="w-4 h-4" />
             Paste text
           </button>
           <button
             onClick={() => setMode('image')}
-            className={`px-3 py-1.5 text-sm rounded-md ${mode === 'image' ? 'bg-white shadow text-slate-900' : 'text-slate-600'}`}
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-sm transition-all
+              ${mode === 'image'
+                ? 'bg-white shadow text-slate-900'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
           >
-            <Camera className="inline w-4 h-4 mr-1" />
+            <Camera className="w-4 h-4" />
             Scan image
           </button>
         </div>
@@ -96,7 +117,7 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
           <textarea
             rows={6}
             placeholder="Paste copied contract text here (at least ~30 characters)…"
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full border border-slate-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
@@ -104,25 +125,25 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
         </div>
       ) : (
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Upload or capture an image</label>
-          <input
-            ref={fileRef}
-            type="file"
+          <ImageAcquire
+            onSelectFile={handleSelectFile}
+            onSelectUrl={handleSelectUrl}
             accept="image/*"
             capture="environment"
-            onChange={handleImagePick}
-            className="block w-full text-sm text-slate-700 file:mr-3 file:px-3 file:py-2 file:rounded-lg file:border-0 file:bg-primary-600 file:text-white hover:file:bg-primary-700"
           />
+
           {imgPreview && (
-            <img
-              src={imgPreview}
-              alt="Preview"
-              className="mt-3 max-h-64 rounded-md border border-gray-200"
-            />
+            <div className="mt-3">
+              <img
+                src={imgPreview}
+                alt="Preview"
+                className="max-h-64 rounded-md border border-slate-200"
+              />
+              <p className="text-xs text-slate-500 mt-2">
+                Keep the image sharp and well-lit. We run OCR with Tesseract (on server).
+              </p>
+            </div>
           )}
-          <p className="text-xs text-slate-500 mt-2">
-            Keep the image sharp and well-lit. We run OCR with Tesseract (on server).
-          </p>
         </div>
       )}
 
@@ -136,6 +157,7 @@ const QuickAnalyze = ({ onResult, navigateToAnalysis }) => {
           Analyze
         </button>
       </div>
+
       <p className="text-[11px] text-slate-500 mt-3">
         By using quick analysis, you agree that pasted text or images will be processed securely for analysis.
       </p>
